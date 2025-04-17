@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title layout:title-pattern="$CONTENT_TITLE - FlexPaper">FlexPaper</title>
+
+    <!-- 공통 CSS -->
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <link th:href="@{/css/backGroundStyle.css}" rel="stylesheet" />
+</head>
+<body>
+<!-- 각 페이지의 콘텐츠가 삽입될 영역 -->
+<div class="content" layout:fragment="content">
+    <!-- 자식 템플릿의 콘텐츠가 여기에 렌더링됩니다. -->
+</div>
+
+<!-- 공통 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 각 페이지에서 script를 추가할 수 있는 영역 -->
+<th:block layout:fragment="script"></th:block>
+</body>
+</html>

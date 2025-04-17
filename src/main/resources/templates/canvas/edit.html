@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/basic.html}">
+<head>
+  <title>Edit Paper</title>
+</head>
+<body>
+<div layout:fragment="content">
+<div class="container mt-4">
+  <h1>Edit Paper</h1>
+  <!-- Paper 수정 폼 -->
+  <form action="#" th:action="@{/paper/update}" th:object="${paperDTO}" method="post">
+    <div class="mb-3">
+      <label for="content" class="form-label">Paper Content</label>
+      <input type="text" class="form-control" id="content" th:field="*{content}" required />
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Paper Description</label>
+      <textarea class="form-control" id="description" th:field="*{description}" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Paper</button>
+  </form>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/basic.html}">
+<head>
+  <title>Create Canvas</title>
+  <link rel="stylesheet" th:href="@{/css/customStyle.css}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+</head>
+<body>
+<div layout:fragment="content">
+  <!-- 상단 고정 토글 버튼 -->
+<div id="fixedToggleButtons">
+  <button id="toggleSidebarBtn" class="btn btn-outline-primary">☰ Tools</button>
+  <button id="toggleRightSidebarBtn" class="btn btn-outline-secondary">☰ Images</button>
+</div>
+<div class="d-flex" id="wrapper">
+  <!-- 사이드바 -->
+  <div class="border-end bg-white" id="sidebar-wrapper">
+    <div class="sidebar-heading border-bottom bg-light">Tools</div>
+    <div class="list-group list-group-flush">
+      <button class="list-group-item list-group-item-action" th:onclick="saveAllCanvas([[${bundleId}]])">💾 Save</button>
+      <button class="list-group-item list-group-item-action" id="addCanvasBtn">➕ Add Canvas</button>
+      <button class="list-group-item list-group-item-action" id="deleteCanvasBtn">🗑 Delete Canvas</button>
+      <button class="list-group-item list-group-item-action" id="addTextBoxBtn">📝 Add TextBox</button>
+      <a th:href="@{/bundle/detail/{id}(id=${bundleId})}" class="list-group-item list-group-item-action">
+        🔙 Back to Detail
+      </a>
+      <button id="printCanvasBtn" class="list-group-item list-group-item-action">
+        🖨️ Print Canvas to PDF
+      </button>
+      <!--<button class="list-group-item list-group-item-action" id="addImageBtn">🖼 Add Image</button>-->
+    </div>
+  </div>
+
+  <!-- 메인 컨텐츠 -->
+  <div id="page-content-wrapper">
+    <div class="container-fluid">
+      <h1 class="mt-4">Edit Canvas</h1>
+      <div id="canvasContainer">
+        <!--<canvas id="paperCanvas-1" width="800" height="600" style="border:1px solid #ccc;" class="paper-canvas"></canvas>-->
+      </div>
+    </div>
+  </div>
+
+  <div id="right-sidebar-wrapper">
+    <div class="border-bottom" id="right-sidebar-header">
+      <button class="right-sidebar-btn list-group-item list-group-item-action" id="uploadImage">UploadImage</button>
+    </div>
+
+    <div id="uploadImageModal" class="modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Upload Image</h5>
+          </div>
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <input type="file" id="imageInput" accept="image/*" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary uploadBtn" id="saveImageBtn">Upload</button>
+            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-dark closeUploadBtn">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="right-sidebar-bottom">
+      <div id="imageContainer"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- JS 파일 로드 -->
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+    // Thymeleaf에서 전달된 canvasJson 데이터를 받아옴
+    const canvasDataString = /*[[${canvasJson}]]*/ null;
+
+    const sidebar = document.getElementById("sidebar-wrapper");
+    const rightSidebar = document.getElementById("right-sidebar-wrapper");
+    const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
+    const toggleRightSidebarBtn = document.getElementById("toggleRightSidebarBtn");
+
+    toggleSidebarBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      sidebar.classList.toggle("show");
+      toggleSidebarBtn.classList.toggle("active");
+
+      // 반대쪽 사이드바 닫기
+      rightSidebar.classList.remove("show");
+      toggleRightSidebarBtn.classList.remove("active");
+    });
+
+    toggleRightSidebarBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      rightSidebar.classList.toggle("show");
+      toggleRightSidebarBtn.classList.toggle("active");
+
+      sidebar.classList.remove("show");
+      toggleSidebarBtn.classList.remove("active");
+    });
+  </script>
+  <script th:src="@{/js/canvas_handler.js}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><!-- jsPDF -->
+</th:block>
+
+</body>
+</html>

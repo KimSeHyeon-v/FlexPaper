@@ -1,0 +1,75 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.3'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'org.zerock'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Spring Boot Web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Thymeleaf (HTML 템플릿 엔진)
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// MariaDB 드라이버
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+	// JPA & Hibernate
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// Lombok (코드 간결화)
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// PDF 생성 (iText)
+	implementation 'com.itextpdf:itext7-core:7.2.5'
+
+	// HTML → PDF 변환 (Flying Saucer)
+	implementation 'org.xhtmlrenderer:flying-saucer-pdf:9.1.22'
+
+	// WebJars - Bootstrap & jQuery
+	implementation 'org.webjars:bootstrap:5.3.2'
+	implementation 'org.webjars:jquery:3.6.4'
+
+	// JSON 직렬화 (React 데이터 처리)
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+	// 개발 도구 (DevTools)
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// AWS S3 SDK 의존성
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.138'
+
+	// 테스트
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// layout
+	implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
+}
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/basic.html}">
+<head>
+    <title>Bundle List</title>
+</head>
+<body class="backgroundClass">
+<div layout:fragment="pageClass">
+    bundle-list
+</div>
+<div layout:fragment="content">
+<div class="container">
+    <h1>My Bundles</h1>
+    <!-- 로그아웃 버튼 -->
+    <form id="logoutForm" th:action="@{/logout}" method="post" th:object="${#httpServletRequest}" onsubmit="return confirmLogout();">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="btn btn-danger mb-3">Logout</button>
+    </form>
+
+    <!-- 추가 버튼 -->
+    <a th:href="@{/bundle/create}" class="btn btn-primary mb-3">Add New Bundle</a>
+
+    <!-- 검색창 -->
+    <form th:action="@{/bundle/list}" method="get" class="input-group mb-3">
+        <input type="text" name="keyword" class="form-control" placeholder="Search bundles"
+               th:value="${keyword}">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </form>
+
+    <!-- 번들 목록 -->
+    <div class="list-group mb-3">
+        <a th:each="bundle : ${bundlePage.content}"
+           th:href="@{/bundle/detail/{bno}(bno=${bundle.id})}"
+           class="list-group-item list-group-item-action">
+            <h5 class="mb-1" th:text="${bundle.title}">Bundle Title</h5>
+            <p class="mb-1" th:text="${bundle.description}">Bundle Description</p>
+        </a>
+    </div>
+
+    <!-- 페이징 -->
+    <nav th:if="${bundlePage.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${bundlePage.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/bundle/list(page=${bundlePage.number - 1}, keyword=${keyword})}">Previous</a>
+            </li>
+
+            <li th:each="i : ${#numbers.sequence(0, bundlePage.totalPages - 1)}"
+                th:classappend="${i == bundlePage.number} ? 'active'" class="page-item">
+                <a class="page-link"
+                   th:href="@{/bundle/list(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${bundlePage.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/bundle/list(page=${bundlePage.number + 1}, keyword=${keyword})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    function confirmLogout() {
+        return confirm("로그아웃하시겠습니까?");
+    }
+</script>
+
+</body>
+</html>

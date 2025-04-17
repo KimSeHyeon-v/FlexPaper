@@ -1,0 +1,7 @@
+body.backgroundClass {
+    background-image: url('/images/backgroundImage/backImage.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    min-height: 100vh;
+}
