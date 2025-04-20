@@ -66,6 +66,7 @@ function initializeCanvases(canvasData) {
       if (!selectedCanvas) {
         setSelectedCanvas(fabricCanvas);
       }
+      bindCanvasEvents(fabricCanvas);
     });
   } else {
     // canvasData가 없거나 canvases 배열이 비어 있는 경우
@@ -95,6 +96,7 @@ function initializeCanvases(canvasData) {
       if (!selectedCanvas) {
         setSelectedCanvas(fabricCanvas);
       }
+      bindCanvasEvents(fabricCanvas);
 
       // maxCanvasIndex를 하나 증가시킴
       maxCanvasIndex++;
@@ -105,10 +107,53 @@ function initializeCanvases(canvasData) {
 // 선택된 캔버스를 설정하는 함수
 function setSelectedCanvas(fabricCanvas) {
   if (selectedCanvas) {
-    selectedCanvas.lowerCanvasEl.style.border = ''; // 이전에 선택된 캔버스의 테두리를 초기화
+    selectedCanvas.lowerCanvasEl.style.border = '';
   }
+
   selectedCanvas = fabricCanvas;
-  selectedCanvas.lowerCanvasEl.style.border = '2px solid blue'; // 현재 선택된 캔버스를 강조
+  selectedCanvas.lowerCanvasEl.style.border = '2px solid blue';
+}
+
+// 캔버스 초기화 시 이벤트 바인딩 분리
+function bindCanvasEvents(fabricCanvas) {
+  let holdTimer = null;
+  const holdDuration = 1000;
+
+  // ✅ 캔버스 클릭 시 선택 처리
+  fabricCanvas.on('mouse:down', function (e) {
+    // 캔버스를 클릭했을 경우에도 setSelectedCanvas()가 호출되도록 처리
+    setSelectedCanvas(fabricCanvas);
+
+    const target = e.target;
+
+    // 이미지 또는 텍스트박스가 아닐 경우 삭제 처리 안 함
+    if (!target || (target.type !== 'image' && target.type !== 'textbox')) {
+      return;
+    }
+
+    // 1초 동안 누르면 삭제 confirm
+    holdTimer = setTimeout(() => {
+      const confirmDelete = confirm('이 오브젝트를 삭제하시겠습니까?');
+      if (confirmDelete) {
+        fabricCanvas.remove(target);
+        fabricCanvas.requestRenderAll();
+      }
+    }, holdDuration);
+  });
+
+  fabricCanvas.on('mouse:up', function () {
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+  });
+
+  fabricCanvas.on('mouse:out', function () {
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+  });
 }
 
 // 새로운 Paper (캔버스) 추가
@@ -132,6 +177,8 @@ document.getElementById('addCanvasBtn').addEventListener('click', function () {
   });
 
   setSelectedCanvas(fabricCanvas); // 새로 추가된 캔버스를 자동으로 선택
+
+  bindCanvasEvents(fabricCanvas);
 });
 
 // Paper 삭제 기능 (최소 1개 유지)
@@ -172,22 +219,6 @@ document.getElementById('addTextBoxBtn').addEventListener('click', function () {
   selectedCanvas.setActiveObject(text); // 추가된 텍스트 박스를 선택 상태로 설정
   selectedCanvas.renderAll(); // 캔버스를 다시 렌더링하여 즉시 반영
 });
-
-/*// 선택된 캔버스에 이미지 추가
-document.getElementById('addImageBtn').addEventListener('click', function () {
-  if (!selectedCanvas) return; // 선택된 캔버스가 없으면 실행하지 않음
-
-
-  // URL에서 이미지 객체 생성 후 추가
-  fabric.Image.fromURL('/assets/icons/sample1.png', function (img) {
-    img.set({
-      left: 100,
-      top: 100,
-      selectable: true
-    });
-    selectedCanvas.add(img);
-  });
-});*/
 
 // 키보드 이벤트 리스너 추가 (Delete 키로 선택된 객체 삭제)
 document.addEventListener('keydown', function (event) {
@@ -259,7 +290,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch("/api/s3/get-images", {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                [csrfHeader]: csrfToken
             }
         })
         .then(response => response.json())
@@ -287,6 +319,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 left: 100,
                                 top: 100,
                                 selectable: true
+                            });
+                            // ✅ 이벤트 등록 예시
+                            img.on('mousedown', () => {
+                            console.log('이미지 클릭됨');
                             });
                             selectedCanvas.add(img);
                             selectedCanvas.renderAll();

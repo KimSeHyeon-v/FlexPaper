@@ -53,6 +53,7 @@
 
 /* 좌측 사이드바 위치 */
 #sidebar-wrapper {
+  margin-left: 0; !important;
   left: 0;
   transform: translateX(-100%);
   overflow-x: hidden;
